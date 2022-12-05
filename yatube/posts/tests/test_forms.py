@@ -64,8 +64,8 @@ class PostsFormsTest(TestCase):
             data=form_data,
             follow=True)
         self.assertRedirects(response, reverse(
-                "posts:profile",
-                kwargs={"username": "test_user"}))
+            "posts:profile",
+            kwargs={"username": "test_user"}))
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertTrue(Post.objects.filter(
             text="BIG TEST TEXT",
@@ -108,7 +108,7 @@ class PostsFormsTest(TestCase):
             "posts:post_detail",
             kwargs={"post_id": f"{self.post_id}"}))
         self.assertEqual(Comment.objects.filter(
-            post=PostsFormsTest.post.id).count(), comment_count+1)
+            post=PostsFormsTest.post.id).count(), comment_count + 1)
         self.assertTrue(Comment.objects.filter(
             text="TEST COMMENT TEXT",
             post=get_object_or_404(

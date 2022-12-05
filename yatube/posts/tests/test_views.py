@@ -183,7 +183,7 @@ class FollowViewsTests(TestCase):
             kwargs={"username": f"{FollowViewsTests.author}"}))
         self.assertEqual(Follow.objects.filter(
             user=FollowViewsTests.user,
-            author=FollowViewsTests.author).count(), self.follow_count+1)
+            author=FollowViewsTests.author).count(), self.follow_count + 1)
 
     def test_dont_follow_yourself(self):
         self.authorized_client.get(reverse(
