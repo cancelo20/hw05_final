@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, Comment, Follow
 from django.contrib.auth import get_user_model
-from .constants import TITLE_LIMIT
 from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from .utils import paginator_page
@@ -34,23 +33,15 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     profile_posts = author.posts.filter(author=author)
-    number_of_prof_posts = profile_posts.count()
     page_obj = paginator_page(request, profile_posts)
     following = False
-    follow_yourself = False
-    if request.user in User.objects.all():
-        if author == request.user:
-            follow_yourself = True
-            following = True
-        else:
-            if Follow.objects.filter(
-                    author=author, user=request.user).exists():
-                following = True
+    follow_yourself = request.user != author
+    if request.user.is_authenticated:
+        following = True
     context = {
         "posts": profile_posts,
         "author": author,
         "page_obj": page_obj,
-        "number_of_posts": number_of_prof_posts,
         "following": following,
         "follow_yourself": follow_yourself}
     return render(request, "posts/profile.html", context)
@@ -59,16 +50,11 @@ def profile(request, username):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     number_of_posts = Post.objects.filter(author=post.author).count()
-    title = post.text[:TITLE_LIMIT]
     comments = Comment.objects.filter(post=post_id).order_by('-created')
     comment_form = CommentForm(request.POST or None)
-    if post.author != request.user:
-        is_edit = False
-    else:
-        is_edit = True
+    is_edit = True if post.author == request.user else False
     context = {
         "post": post,
-        "title": title,
         "number_of_posts": number_of_posts,
         "form": comment_form,
         "comments": comments,

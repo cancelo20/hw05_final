@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-<title>Пост {{ title }}</title>
+<title>Пост {{ post.text|slice:"30" }}</title>
 {% endblock %}
 {% block content %}
 {% load user_filters %}
